@@ -178,7 +178,23 @@ SELECT * FROM reserva;
 SELECT * FROM reserva WHERE asiento LIKE '1%';
 
 
+DELETE FROM reserva WHERE id = 6;
+DELETE FROM reserva WHERE id = 7;
 
+
+DELETE FROM vuelo WHERE id = 6;
+DELETE FROM vuelo WHERE id = 7;
+
+
+DELETE FROM pasajero WHERE id = 6;
+DELETE FROM pasajero WHERE id = 7;
+
+DELETE FROM avion WHERE id = 6;
+DELETE FROM avion WHERE id = 7;
+
+
+DELETE FROM aeropuerto WHERE id = 6;
+DELETE FROM aeropuerto WHERE id = 7;
 
 SELECT
     p.nombre AS pasajero,
