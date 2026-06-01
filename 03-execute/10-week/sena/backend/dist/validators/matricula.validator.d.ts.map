@@ -1,0 +1,1 @@
+{"version":3,"file":"matricula.validator.d.ts","sourceRoot":"","sources":["../../src/validators/matricula.validator.ts"],"names":[],"mappings":"AACA,OAAO,EACL,kBAAkB,EAGlB,kBAAkB,EACnB,MAAM,uBAAuB,CAAC;AAiC/B,wBAAgB,uBAAuB,CAAC,OAAO,EAAE,MAAM,CAAC,MAAM,EAAE,OAAO,CAAC,GAAG,kBAAkB,CAuB5F;AAED,wBAAgB,uBAAuB,CAAC,OAAO,EAAE,MAAM,CAAC,MAAM,EAAE,OAAO,CAAC,GAAG,kBAAkB,CA6B5F"}

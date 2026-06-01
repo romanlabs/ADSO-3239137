@@ -1,0 +1,306 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  background-color: #39a900;
+  color: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+header h1 {
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+}
+
+nav {
+  display: flex;
+  gap: 2rem;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+
+nav a:hover {
+  opacity: 0.8;
+}
+
+main {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+main h2 {
+  color: #39a900;
+  margin-bottom: 1rem;
+}
+
+main p {
+  line-height: 1.6;
+}
+
+.page {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.page-header {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.stats-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.stat-card,
+.panel {
+  background: white;
+  border: 1px solid #e2e2e2;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+.stat-card {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1rem;
+}
+
+.stat-card span {
+  color: #555;
+  font-weight: 500;
+}
+
+.stat-card strong {
+  color: #333;
+  font-size: 2rem;
+}
+
+.panel {
+  padding: 1.25rem;
+}
+
+.panel h2 {
+  margin-bottom: 1rem;
+}
+
+.form-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.form-field {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.form-field span {
+  color: #444;
+  font-weight: 500;
+}
+
+.form-field input,
+.form-field select,
+.search-input {
+  background: white;
+  border: 1px solid #d0d0d0;
+  color: #333;
+  min-height: 42px;
+  padding: 0.65rem 0.75rem;
+  width: 100%;
+}
+
+.search-input {
+  max-width: 340px;
+}
+
+.form-actions {
+  align-items: end;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.btn {
+  align-items: center;
+  background: #f5f5f5;
+  border: 1px solid #d0d0d0;
+  color: #333;
+  display: inline-flex;
+  font-weight: 500;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0.55rem 0.9rem;
+}
+
+.btn-primary {
+  background: #39a900;
+  border-color: #39a900;
+  color: white;
+}
+
+.btn-danger {
+  background: #c62828;
+  border-color: #c62828;
+  color: white;
+}
+
+.btn-ghost {
+  background: white;
+}
+
+.btn-small {
+  min-height: 34px;
+  padding: 0.35rem 0.7rem;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  border-collapse: collapse;
+  min-width: 820px;
+  width: 100%;
+}
+
+th,
+td {
+  border-bottom: 1px solid #e5e5e5;
+  padding: 0.75rem;
+  text-align: left;
+  vertical-align: middle;
+}
+
+th {
+  color: #555;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.badge {
+  border: 1px solid #d0d0d0;
+  display: inline-flex;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.3rem 0.65rem;
+}
+
+.en-formacion {
+  background: #e8f5e9;
+  color: #237a26;
+}
+
+.condicionado {
+  background: #fff4db;
+  color: #8a5700;
+}
+
+.cancelado {
+  background: #ffe8e8;
+  color: #9e1d1d;
+}
+
+.toast {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.16);
+  color: white;
+  font-weight: 500;
+  padding: 0.8rem 1rem;
+  position: fixed;
+  right: 1.5rem;
+  top: 1.5rem;
+  z-index: 10;
+}
+
+.toast-success {
+  background: #39a900;
+}
+
+.toast-error {
+  background: #c62828;
+}
+
+.dialog-backdrop {
+  align-items: center;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 1rem;
+  position: fixed;
+  z-index: 20;
+}
+
+.dialog {
+  background: white;
+  max-width: 420px;
+  padding: 1.5rem;
+  width: 100%;
+}
+
+.dialog p {
+  color: #555;
+  margin-top: 0.5rem;
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 1.25rem;
+}
+
+@media (max-width: 920px) {
+  .stats-grid,
+  .form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  header,
+  main {
+    padding: 1rem;
+  }
+
+  header h1 {
+    font-size: 1.45rem;
+  }
+
+  nav {
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .page-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .search-input,
+  .stats-grid,
+  .form-grid {
+    max-width: none;
+    grid-template-columns: 1fr;
+  }
+}
