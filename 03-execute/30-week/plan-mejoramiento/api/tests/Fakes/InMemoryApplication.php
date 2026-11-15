@@ -6,6 +6,7 @@ use App\Application\Services\CreateLaptopService;
 use App\Application\Services\CreateStudentService;
 use App\Application\Services\LendLaptopService;
 use App\Application\Services\ListLoansService;
+use App\Application\Services\MostRequestedReportService;
 use App\Application\Services\OverdueService;
 use App\Application\Services\ReturnItemService;
 use App\Application\Services\UpdateLaptopService;
@@ -54,6 +55,11 @@ final class InMemoryApplication
     public function listLoans(): ListLoansService
     {
         return new ListLoansService($this->loans, $this->clock);
+    }
+
+    public function mostRequested(): MostRequestedReportService
+    {
+        return new MostRequestedReportService(new InMemoryMostRequestedReportReader($this->loans));
     }
 
     public function createLaptop(): CreateLaptopService
