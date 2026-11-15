@@ -1,59 +1,47 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# api — Préstamo de portátiles (Laravel 12 + PostgreSQL 16)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Backend del sistema de préstamo de portátiles. Arquitectura hexagonal: `app/Domain` (reglas), `app/Application`
+(casos de uso y puertos) e `app/Infrastructure` (adaptadores). El detalle está en
+[`../docs/architecture.md`](../docs/architecture.md) y el contrato HTTP en [`../docs/api-contract.md`](../docs/api-contract.md).
 
-## About Laravel
+## Estructura
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+| Carpeta | Qué hay |
+|---|---|
+| `app/Domain` | `Laptop`, `Loan`, `LoanItem`, `Student`, `User`, objetos de valor y errores de negocio |
+| `app/Application/Ports` | Interfaces que el núcleo necesita: repositorios, reloj, hash, token, fotos, transacción |
+| `app/Application/Services` | Un servicio por caso de uso (iniciar sesión, prestar, devolver, reporte, …) |
+| `app/Infrastructure` | Adaptadores HTTP, PostgreSQL, seguridad, disco y reloj |
+| `database/migrations` | Todo el esquema `laptops` y la semilla de las cinco categorías |
+| `tests/Unit` | Dominio y casos de uso con fakes en memoria (sin base de datos) |
+| `tests/Feature` | Pruebas contra PostgreSQL real y de punta a punta |
+| `tests/Fakes` | Implementaciones en memoria de cada puerto |
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Correr las pruebas
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Las pruebas de `Feature` necesitan PostgreSQL 16. Con Docker, desde esta carpeta:
 
-## Learning Laravel
+```bash
+docker network create laptops-dev
+docker run -d --name laptops-dev-db --network laptops-dev \
+  -e POSTGRES_USER=laptops -e POSTGRES_PASSWORD=devonly -e POSTGRES_DB=laptops postgres:16-alpine
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+docker build -t laptops-api:dev .
+docker run --rm --network laptops-dev -v "$PWD:/app" -w /app \
+  -e DB_HOST=laptops-dev-db -e DB_USERNAME=laptops -e DB_PASSWORD=devonly \
+  --entrypoint php laptops-api:dev vendor/bin/phpunit
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+`tests/bootstrap.php` crea la base `laptops_test` si no existe. Las pruebas unitarias no la usan.
 
-## Laravel Sponsors
+## Variables de entorno
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+| Variable | Para qué |
+|---|---|
+| `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` | Conexión a PostgreSQL |
+| `JWT_SECRET` | Firma de los tokens (HS256, 8 horas) |
+| `ADMIN_USERNAME`, `ADMIN_PASSWORD` | Administrador inicial que se crea al arrancar |
+| `CORS_ORIGIN` | Único origen permitido para el frontend |
+| `CLOCK_OFFSET_DAYS` | Desplaza el reloj solo para el sembrador ([ADR-005](../docs/adr/adr-005-reloj-como-puerto.md)); en producción no se define |
 
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Ningún secreto se versiona: solo `.env.example`.

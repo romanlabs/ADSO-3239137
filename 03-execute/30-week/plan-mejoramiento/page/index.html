@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Préstamo de portátiles</title>
+  <meta name="description" content="Inventario de portátiles, estudiantes, préstamos y devoluciones en un solo lugar, con alertas de vencidos y el reporte de equipos más solicitados.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="#inicio">
+        <span class="brand-mark" aria-hidden="true"></span>
+        Préstamo de portátiles
+      </a>
+      <nav class="site-nav" aria-label="Secciones">
+        <a href="#funciones">Funciones</a>
+        <a href="#reglas">Reglas</a>
+        <a href="#roles">Roles</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="inicio">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Para instituciones educativas</p>
+          <h1>Cada portátil prestado, con dueño y fecha de regreso.</h1>
+          <p class="lead">
+            Deja atrás la planilla. Lleva el inventario de equipos, registra a quién se le entrega cada uno y
+            mira de un vistazo qué está vencido y qué modelos conviene comprar.
+          </p>
+          <a class="button" href="#funciones">Ver cómo funciona</a>
+        </div>
+
+        <figure class="ticket" aria-label="Ejemplo de un préstamo registrado">
+          <div class="ticket-head">
+            <span class="ticket-label">Préstamo</span>
+            <span class="pill pill-open">Abierto</span>
+          </div>
+          <p class="ticket-device">ThinkPad E14 Gen 5</p>
+          <p class="ticket-meta">TP-E14-G5 · Programación</p>
+          <dl class="ticket-dates">
+            <div>
+              <dt>Entregado</dt>
+              <dd>16 nov 2026</dd>
+            </div>
+            <div>
+              <dt>Vence</dt>
+              <dd>1 dic 2026</dd>
+            </div>
+          </dl>
+          <div class="ticket-units">
+            <span>Unidades disponibles</span>
+            <strong>3 de 4</strong>
+          </div>
+        </figure>
+      </div>
+    </section>
+
+    <section id="funciones" class="section">
+      <div class="wrap">
+        <h2>Todo lo que pasa con un equipo, en un solo lugar</h2>
+        <div class="features">
+          <article class="feature">
+            <h3>Inventario</h3>
+            <p>Cada portátil con nombre, marca, código de modelo, foto opcional y cuántas unidades hay y cuántas quedan.</p>
+          </article>
+          <article class="feature">
+            <h3>Categorías</h3>
+            <p>Cinco grupos fijos para ordenar el inventario: básicos, diseño, programación, tabletas y accesorios.</p>
+          </article>
+          <article class="feature">
+            <h3>Estudiantes</h3>
+            <p>Registro con nombre completo y documento, búsqueda rápida y cuántos equipos tiene cada uno sin devolver.</p>
+          </article>
+          <article class="feature">
+            <h3>Préstamos</h3>
+            <p>Al entregar, el equipo descuenta una unidad en el mismo instante. Si dos personas entregan la última a la vez, solo una lo logra.</p>
+          </article>
+          <article class="feature">
+            <h3>Devoluciones</h3>
+            <p>Se recibe el equipo, se anota la hora y la unidad vuelve al inventario. Devolver dos veces nunca suma dos veces.</p>
+          </article>
+          <article class="feature">
+            <h3>Vencidos</h3>
+            <p>Lista de los equipos que pasaron su fecha, con el estudiante y los días de retraso, empezando por el más atrasado.</p>
+          </article>
+          <article class="feature feature-wide">
+            <h3>Más solicitados</h3>
+            <p>
+              Elige un rango de fechas y mira qué portátiles se pidieron más. El reporte conserva el nombre que tenía
+              el equipo cuando se prestó, así un periodo cerrado no cambia aunque luego se renombre.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="reglas" class="section section-tinted">
+      <div class="wrap">
+        <h2>Reglas del préstamo</h2>
+        <ol class="rules">
+          <li><strong>15 días</strong> de plazo desde la entrega.</li>
+          <li><strong>1 equipo</strong> sin devolver por estudiante, como máximo.</li>
+          <li>Quien tiene un equipo <strong>vencido</strong> no recibe otro hasta devolverlo.</li>
+          <li>Las unidades disponibles nunca bajan de cero ni superan el total.</li>
+          <li>Los préstamos y las devoluciones no se borran; un portátil retirado sigue en el historial.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="roles" class="section">
+      <div class="wrap">
+        <h2>Roles</h2>
+        <div class="roles">
+          <article class="role">
+            <h3>Administrador</h3>
+            <p>Mantiene el inventario y los estudiantes, da de alta a los auxiliares y ve el reporte de más solicitados.</p>
+          </article>
+          <article class="role">
+            <h3>Auxiliar</h3>
+            <p>Registra préstamos y devoluciones y consulta inventario, estudiantes y vencidos.</p>
+          </article>
+          <article class="role role-muted">
+            <h3>Estudiante</h3>
+            <p>Recibe el portátil. No necesita cuenta: sus datos los registra el personal.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>Préstamo de portátiles · 2026</p>
+    </div>
+  </footer>
+</body>
+</html>
