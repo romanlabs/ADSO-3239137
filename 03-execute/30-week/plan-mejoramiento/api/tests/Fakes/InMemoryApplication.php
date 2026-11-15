@@ -5,6 +5,9 @@ namespace Tests\Fakes;
 use App\Application\Services\CreateLaptopService;
 use App\Application\Services\CreateStudentService;
 use App\Application\Services\LendLaptopService;
+use App\Application\Services\ListLoansService;
+use App\Application\Services\OverdueService;
+use App\Application\Services\ReturnItemService;
 use App\Application\Services\UpdateLaptopService;
 
 /**
@@ -35,7 +38,22 @@ final class InMemoryApplication
         $this->categories = new InMemoryCategoryRepository;
         $this->laptops = new InMemoryLaptopRepository;
         $this->students = new InMemoryStudentRepository;
-        $this->loans = new InMemoryLoanRepository($this->laptops);
+        $this->loans = new InMemoryLoanRepository($this->laptops, $this->students);
+    }
+
+    public function returnItem(): ReturnItemService
+    {
+        return new ReturnItemService($this->loans, $this->laptops, $this->transactions, $this->clock);
+    }
+
+    public function overdue(): OverdueService
+    {
+        return new OverdueService($this->loans, $this->clock);
+    }
+
+    public function listLoans(): ListLoansService
+    {
+        return new ListLoansService($this->loans, $this->clock);
     }
 
     public function createLaptop(): CreateLaptopService

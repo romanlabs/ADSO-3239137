@@ -128,6 +128,14 @@ final class InMemoryLaptopRepository implements LaptopRepository
         }
     }
 
+    /** Atomic increment like `SET available_units = available_units + 1`; restock() refuses to pass the total. */
+    public function addOneUnit(string $laptopId): void
+    {
+        $stored = $this->laptops[$laptopId] ?? throw new LogicException('Restocking a laptop that was never added.');
+        $stored->restock();
+        $this->readUnits[$laptopId] = $stored->availableUnits();
+    }
+
     /** Simulates another operator lending one unit right after this request read the laptop. */
     public function anotherOperatorTakesAUnitAfterNextRead(string $laptopId): void
     {
