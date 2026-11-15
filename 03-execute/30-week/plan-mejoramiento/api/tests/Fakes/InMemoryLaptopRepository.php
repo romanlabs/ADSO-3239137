@@ -133,7 +133,6 @@ final class InMemoryLaptopRepository implements LaptopRepository
     {
         $stored = $this->laptops[$laptopId] ?? throw new LogicException('Restocking a laptop that was never added.');
         $stored->restock();
-        $this->readUnits[$laptopId] = $stored->availableUnits();
     }
 
     /** Simulates another operator lending one unit right after this request read the laptop. */
