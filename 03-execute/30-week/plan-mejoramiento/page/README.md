@@ -1,7 +1,7 @@
 # page — Sitio público
 
 Página estática de presentación del sistema de préstamo de portátiles. Solo HTML y CSS: no llama a la API ni necesita
-servidor (decisión D-14 de [`../docs/plan.md`](../docs/plan.md)).
+servidor.
 
 ## Cómo abrirlo
 
