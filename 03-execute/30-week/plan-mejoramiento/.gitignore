@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Build output and caches
+dist/
+build/
+.phpunit.cache/
+.phpunit.result.cache
+storage/*.key
+api/storage/app/photos/
+api/storage/logs/*.log
+
+# Editors and OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
