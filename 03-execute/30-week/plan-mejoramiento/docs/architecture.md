@@ -42,10 +42,10 @@ app/
 │   ├── Ports/                 # LaptopRepository, LoanRepository, StudentRepository, UserRepository,
 │   │                          # CategoryRepository, MostRequestedReportReader, Clock, PasswordHasher,
 │   │                          # TokenIssuer, PhotoStorage, TransactionRunner, IdGenerator
-│   └── Services/              # LoginService, CreateAssistantService, CreateLaptopService, UpdateLaptopService,
-│                              # RetireLaptopService, SearchLaptopsService, LaptopPhotoService, CreateStudentService,
-│                              # SearchStudentsService, LendLaptopService, ReturnItemService, ListLoansService,
-│                              # OverdueService, MostRequestedReportService
+│   └── Services/              # LoginService, CreateAssistantService, ListCategoriesService, CreateLaptopService,
+│                              # UpdateLaptopService, RetireLaptopService, SearchLaptopsService, LaptopPhotoService,
+│                              # CreateStudentService, SearchStudentsService, LendLaptopService, ReturnItemService,
+│                              # ListLoansService, OverdueService, MostRequestedReportService
 ├── Infrastructure/
 │   ├── Http/                  # Controllers/, Middleware/ (Authenticate, RequireRole), ErrorRenderer, Presenters
 │   ├── Console/               # BootstrapAdminCommand
@@ -87,15 +87,33 @@ sequenceDiagram
     participant R as LoanRepository
     C->>H: POST /api/v1/loans
     H->>S: lend(studentId, laptopIds, userId)
-    S->>St: obtener estudiante + líneas sin devolver (Q7)
+    S->>S: ¿al menos una línea? ¿portátil repetido?
+    S->>St: obtener estudiante
+    S->>L: obtener portátiles activos por lote (Q3)
+    S->>R: líneas sin devolver del estudiante y cuántas vencidas (Q7)
     S->>S: ¿tiene vencidos? ¿supera 1?
-    S->>L: obtener portátiles por lote (Q3)
     S->>S: Loan::addItem → Laptop::withdraw (por cada portátil)
     S->>R: guardar préstamo + unidades (una transacción)
     R-->>S: ok, o 0 filas actualizadas (otro ganó)
     S-->>H: préstamo o LaptopNotAvailable
     H-->>C: 201 o 409
 ```
+
+El orden de las comprobaciones es el del contrato (§3.6): forma, repetido, inexistente, vencidos, límite y unidades.
+`tests/Unit/Application/LendLaptopServiceTest.php` prueba cada par vecino de ese orden.
+
+**Devolución.** `ReturnItemService` marca la línea y el repositorio la guarda solo si sigue sin devolver
+(`WHERE returned_at IS NULL`); la unidad se suma con un incremento atómico que nunca pasa del total. Así, dos auxiliares
+devolviendo la misma línea a la vez suman **una** unidad y el segundo recibe `ITEM_ALREADY_RETURNED`.
+
+**Orden de los listados.** Portátiles y estudiantes se ordenan por nombre **sin distinguir mayúsculas** y luego por `id`,
+para que la paginación sea estable.
+
+## 4.1 Fakes de prueba
+
+`tests/Fakes/` tiene una implementación en memoria de cada puerto. Guardan **copias** (un servicio que falla a mitad no
+deja rastro) y reproducen la escritura condicional de ADR-002, de modo que las pruebas de aplicación ejercen también la
+carrera por la última unidad. `InMemoryApplication` arma los servicios con esos fakes solo para las pruebas.
 
 ## 5. Errores
 
