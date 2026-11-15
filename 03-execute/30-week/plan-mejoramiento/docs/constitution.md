@@ -3,7 +3,7 @@
 Principios innegociables del proyecto. Cada artículo dice **cómo se verifica**: un principio que nadie puede comprobar es solo una
 intención. Un cambio que viole un artículo se rechaza sin discutir el resto.
 
-Stack: backend en **PHP 8.3 con Laravel 12**, frontend en **React 18 con Vite**, base **PostgreSQL 16**. Las rutas de carpetas que
+Stack: backend en **PHP 8.4 con Laravel 12**, frontend en **React 18 con Vite**, base **PostgreSQL 16**. Las rutas de carpetas que
 aparecen abajo son las del repositorio `api/`.
 
 ---

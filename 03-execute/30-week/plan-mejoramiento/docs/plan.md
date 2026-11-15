@@ -7,7 +7,7 @@ Cómo se construye lo que dicen [`spec.md`](spec.md) y [`constitution.md`](const
 
 | # | Decisión | Elección | Por qué |
 |---|---|---|---|
-| D-01 | Lenguaje y runtime del backend | PHP 8.3 | Requisito del plan: backend en PHP |
+| D-01 | Lenguaje y runtime del backend | PHP 8.4 | Requisito del plan: backend en PHP |
 | D-02 | Framework HTTP | Laravel 12, solo como capa de entrada (rutas, middleware, validación, contenedor) | Contrato en [`api-contract.md`](api-contract.md) |
 | D-03 | Persistencia | Constructor de consultas de Laravel (`DB::table`) sobre PostgreSQL 16, en adaptadores; migraciones de Laravel | El esquema es de las migraciones ([ADR-001](adr/adr-001-propiedad-del-esquema.md)); el dominio no hereda de `Model` |
 | D-04 | Concurrencia | Actualización condicional sobre `available_units` (comparar y fijar) + `CHECK` de rango ([ADR-002](adr/adr-002-concurrencia-optimista.md)) | Última unidad (RNF-2) |
