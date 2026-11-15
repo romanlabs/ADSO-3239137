@@ -7,10 +7,10 @@ commit que entrega la evidencia. Los comandos se corren desde `infra/` con los c
 |---|---|---|---|---|
 | T-01 | Esqueleto del proyecto Laravel y `GET /api/v1/health` | — | `curl localhost:8000/api/v1/health` responde `{"status":"ok"}`; `tests/Feature/HealthTest.php` | hecha |
 | T-02 | Migración inicial: esquema `laptops`, seis tablas, FK, índices únicos y las cinco categorías sembradas | T-01 | Las consultas de `data-model.md` §10 devuelven lo documentado; ninguna columna con `DEFAULT`; `tests/Feature/SchemaTest.php` | hecha |
-| T-03 | Dominio: `ModelCode`, `Quantity`, `DocumentNumber`, `DateRange` (objetos de valor) | T-01 | `tests/Unit/Domain/ValueObjectsTest.php`: código de 4 a 20 caracteres, cantidad > 0, fin ≥ inicio | pendiente |
-| T-04 | Dominio: `Laptop` (`withdraw`, `restock`, `changeTotal`, baja lógica) | T-03 | `tests/Unit/Domain/LaptopTest.php`: nunca < 0, nunca > total | pendiente |
-| T-05 | Dominio: `Loan` (`addItem`, `returnItem`, estado calculado, 15 días, máx. 1) | T-04 | `tests/Unit/Domain/LoanTest.php` con un reloj fijo: `open`, `overdue`, `closed` | pendiente |
-| T-06 | Dominio: `Student` y `User` (normalización de nombre, rol válido) | T-03 | `tests/Unit/Domain/UserAndStudentTest.php`: `"Camila "` queda `camila`; rol `admin` por API rechazado | pendiente |
+| T-03 | Dominio: `ModelCode`, `Quantity`, `DocumentNumber`, `DateRange` (objetos de valor) | T-01 | `tests/Unit/Domain/ValueObjectsTest.php`: código de 4 a 20 caracteres, cantidad > 0, fin ≥ inicio | hecha |
+| T-04 | Dominio: `Laptop` (`withdraw`, `restock`, `changeTotal`, baja lógica) | T-03 | `tests/Unit/Domain/LaptopTest.php`: nunca < 0, nunca > total | hecha |
+| T-05 | Dominio: `Loan` (`addItem`, `returnItem`, estado calculado, 15 días, máx. 1) | T-04 | `tests/Unit/Domain/LoanTest.php` con un reloj fijo: `open`, `overdue`, `closed` | hecha |
+| T-06 | Dominio: `Student` y `User` (normalización de nombre, rol válido) | T-03 | `tests/Unit/Domain/UserAndStudentTest.php`: `"Camila "` queda `camila`; rol `admin` por API rechazado | hecha |
 | T-07 | Puertos y casos de uso de **autenticación** (`LoginService`, `CreateAssistantService`) con fakes | T-06 | `tests/Unit/Application/AuthServicesTest.php`: HU-01 y HU-02 pasan contra fakes | pendiente |
 | T-08 | Puertos y casos de uso de **portátiles** (crear, buscar, editar, baja, foto) con fakes | T-04 | `tests/Unit/Application/LaptopServicesTest.php`: HU-03 y HU-04 pasan contra fakes | pendiente |
 | T-09 | Caso de uso **prestar** (`LendLaptopService`) con fakes | T-05, T-08 | `tests/Unit/Application/LendLaptopServiceTest.php`: HU-06 completa (límite, vencidos, sin unidades, repetido) | pendiente |
