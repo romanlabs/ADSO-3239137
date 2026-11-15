@@ -51,7 +51,7 @@ erDiagram
 
 Seis entidades, seis tablas. No hay tabla de reporte, de multas, de reservas ni de auditoría.
 
-La única tabla adicional es la que Laravel usa para registrar qué migraciones corrieron (`laptops.migrations`). No es parte del
+La única tabla adicional es la que Laravel usa para registrar qué migraciones corrieron (`public.migrations`, fuera del esquema del negocio). No es parte del
 negocio y no se consulta desde el código. Laravel no crea ninguna otra: el proyecto no usa sesiones, caché en base, colas ni tokens
 persistidos (ver [`plan.md`](plan.md) D-11).
 

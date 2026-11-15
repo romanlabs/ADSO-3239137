@@ -5,8 +5,8 @@ commit que entrega la evidencia. Los comandos se corren desde `infra/` con los c
 
 | # | Tarea | Depende de | Evidencia | Estado |
 |---|---|---|---|---|
-| T-01 | Esqueleto del proyecto Laravel y `GET /api/v1/health` | — | `curl localhost:8000/api/v1/health` responde `{"status":"ok"}`; `tests/Feature/HealthTest.php` | pendiente |
-| T-02 | Migración inicial: esquema `laptops`, seis tablas, FK, índices únicos y las cinco categorías sembradas | T-01 | Las consultas de `data-model.md` §10 devuelven lo documentado; ninguna columna con `DEFAULT`; `tests/Feature/SchemaTest.php` | pendiente |
+| T-01 | Esqueleto del proyecto Laravel y `GET /api/v1/health` | — | `curl localhost:8000/api/v1/health` responde `{"status":"ok"}`; `tests/Feature/HealthTest.php` | hecha |
+| T-02 | Migración inicial: esquema `laptops`, seis tablas, FK, índices únicos y las cinco categorías sembradas | T-01 | Las consultas de `data-model.md` §10 devuelven lo documentado; ninguna columna con `DEFAULT`; `tests/Feature/SchemaTest.php` | hecha |
 | T-03 | Dominio: `ModelCode`, `Quantity`, `DocumentNumber`, `DateRange` (objetos de valor) | T-01 | `tests/Unit/Domain/ValueObjectsTest.php`: código de 4 a 20 caracteres, cantidad > 0, fin ≥ inicio | pendiente |
 | T-04 | Dominio: `Laptop` (`withdraw`, `restock`, `changeTotal`, baja lógica) | T-03 | `tests/Unit/Domain/LaptopTest.php`: nunca < 0, nunca > total | pendiente |
 | T-05 | Dominio: `Loan` (`addItem`, `returnItem`, estado calculado, 15 días, máx. 1) | T-04 | `tests/Unit/Domain/LoanTest.php` con un reloj fijo: `open`, `overdue`, `closed` | pendiente |
