@@ -8,6 +8,6 @@ final class ModelCodeTaken extends DomainError
 
     public static function create(string $modelCode): self
     {
-        return new self("Ya hay un portátil activo con el código de modelo «$modelCode».", [['field' => 'model_code', 'issue' => 'repetido']]);
+        return new self("Ya hay un portátil activo con el código de modelo «{$modelCode}».", [['field' => 'model_code', 'issue' => 'repetido']]);
     }
 }

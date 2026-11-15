@@ -8,6 +8,6 @@ final class UsernameTaken extends DomainError
 
     public static function create(string $username): self
     {
-        return new self("El usuario «$username» ya existe.", [['field' => 'username', 'issue' => 'repetido']]);
+        return new self("El usuario «{$username}» ya existe.", [['field' => 'username', 'issue' => 'repetido']]);
     }
 }

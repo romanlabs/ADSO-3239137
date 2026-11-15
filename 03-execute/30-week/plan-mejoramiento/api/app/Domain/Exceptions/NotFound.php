@@ -8,6 +8,6 @@ final class NotFound extends DomainError
 
     public static function resource(string $what): self
     {
-        return new self("No se encontró $what.");
+        return new self("No se encontró {$what}.");
     }
 }

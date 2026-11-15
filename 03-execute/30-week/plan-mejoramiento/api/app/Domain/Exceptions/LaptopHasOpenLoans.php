@@ -8,6 +8,6 @@ final class LaptopHasOpenLoans extends DomainError
 
     public static function create(string $name): self
     {
-        return new self("«$name» tiene préstamos sin devolver y no se puede dar de baja.");
+        return new self("«{$name}» tiene préstamos sin devolver y no se puede dar de baja.");
     }
 }

@@ -9,8 +9,8 @@ final class StudentLimitExceeded extends DomainError
     public static function create(int $unreturned, int $limit): self
     {
         return new self(
-            "El estudiante ya tiene $unreturned portátil(es) sin devolver; el máximo es $limit.",
-            [['field' => 'student_id', 'issue' => "sin devolver: $unreturned"]],
+            "El estudiante ya tiene {$unreturned} portátil(es) sin devolver; el máximo es {$limit}.",
+            [['field' => 'student_id', 'issue' => "sin devolver: {$unreturned}"]],
         );
     }
 }

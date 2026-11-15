@@ -8,6 +8,6 @@ final class LaptopNotAvailable extends DomainError
 
     public static function create(string $name, string $field = 'items[0].laptop_id'): self
     {
-        return new self("No quedan unidades disponibles de «$name».", [['field' => $field, 'issue' => 'sin unidades']]);
+        return new self("No quedan unidades disponibles de «{$name}».", [['field' => $field, 'issue' => 'sin unidades']]);
     }
 }
