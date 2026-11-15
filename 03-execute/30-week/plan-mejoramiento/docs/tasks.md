@@ -12,7 +12,7 @@ commit que entrega la evidencia. Los comandos se corren desde `infra/` con los c
 | T-05 | Dominio: `Loan` (`addItem`, `returnItem`, estado calculado, 15 días, máx. 1) | T-04 | `tests/Unit/Domain/LoanTest.php` con un reloj fijo: `open`, `overdue`, `closed` | hecha |
 | T-06 | Dominio: `Student` y `User` (normalización de nombre, rol válido) | T-03 | `tests/Unit/Domain/UserAndStudentTest.php`: `"Camila "` queda `camila`; rol `admin` por API rechazado | hecha |
 | T-07 | Puertos y casos de uso de **autenticación** (`LoginService`, `CreateAssistantService`) con fakes | T-06 | `tests/Unit/Application/AuthServicesTest.php`: HU-01 y HU-02 pasan contra fakes | hecha |
-| T-08 | Puertos y casos de uso de **portátiles** (crear, buscar, editar, baja, foto) con fakes | T-04 | `tests/Unit/Application/LaptopServicesTest.php`: HU-03 y HU-04 pasan contra fakes | pendiente |
+| T-08 | Puertos y casos de uso de **portátiles** (crear, buscar, editar, baja, foto) con fakes | T-04 | `tests/Unit/Application/LaptopServicesTest.php`: HU-03 y HU-04 pasan contra fakes | hecha |
 | T-09 | Caso de uso **prestar** (`LendLaptopService`) con fakes | T-05, T-08 | `tests/Unit/Application/LendLaptopServiceTest.php`: HU-06 completa (límite, vencidos, sin unidades, repetido) | pendiente |
 | T-10 | Caso de uso **devolver** y **vencidos** | T-09 | `tests/Unit/Application/ReturnAndOverdueTest.php`: HU-07 y HU-09; devolver dos veces → `ITEM_ALREADY_RETURNED` | pendiente |
 | T-11 | Caso de uso **reporte de más solicitados** y su puerto de lectura | T-09 | `tests/Feature/MostRequestedReportTest.php`: HU-10; el nombre viejo se conserva tras renombrar (ADR-004) | pendiente |
