@@ -10,8 +10,11 @@
 - **Alternativas descartadas:** bloqueo pesimista (`SELECT … FOR UPDATE`) en cada préstamo: serializa todo el inventario por un caso
   raro; columna `version` aparte: el modelo de datos no la declara y `available_units` ya cumple ese papel; contador en memoria: no
   sobrevive a más de un proceso PHP.
-- **Consecuencias:** si el `CHECK` salta, **algo escribió fuera del adaptador**: es un defecto, no un caso de negocio. La misma regla
-  protege `restock` (devolución) y el cambio de total. Devolver dos veces la misma línea no suma dos veces porque `returned_at` ya está
-  lleno (CA-07.2) y la actualización de la línea también es condicional (`WHERE returned_at IS NULL`).
+- **Consecuencias:** si el `CHECK` salta, **algo escribió fuera del adaptador**: es un defecto, no un caso de negocio. La misma
+  comparación protege el cambio de total. La devolución (`restock`) **no** compara con el valor leído: suma con un incremento atómico
+  (`SET available_units = available_units + 1 WHERE id = :id AND available_units < total_units`), porque una devolución no debe
+  fallar solo porque otro préstamo del mismo portátil se cruzó; el `CHECK` sigue siendo la barrera final. Devolver dos veces la
+  misma línea no suma dos veces porque `returned_at` ya está lleno (CA-07.2) y la actualización de la línea también es condicional
+  (`WHERE returned_at IS NULL`).
 - **Cómo se verifica:** `tests/Feature/LastUnitConcurrencyTest.php` abre dos conexiones sobre un portátil con una unidad: exactamente un
   préstamo queda registrado y el otro recibe `LAPTOP_NOT_AVAILABLE`.
