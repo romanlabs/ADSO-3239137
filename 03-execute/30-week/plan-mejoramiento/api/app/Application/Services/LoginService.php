@@ -8,6 +8,7 @@ use App\Application\Ports\UserRepository;
 use App\Domain\Exceptions\InvalidCredentials;
 use App\Domain\Exceptions\ValidationFailed;
 use App\Domain\User;
+use SensitiveParameter;
 
 /**
  * HU-01. Every failure ends in the same InvalidCredentials error so the caller never learns
@@ -22,7 +23,7 @@ final readonly class LoginService
     ) {
     }
 
-    public function login(string $username, string $password): LoginResult
+    public function login(string $username, #[SensitiveParameter] string $password): LoginResult
     {
         try {
             $normalized = User::normalizeUsername($username);
