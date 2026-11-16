@@ -24,7 +24,7 @@ curl http://localhost:8000/api/v1/health   # {"status":"ok"}
 | `DB_PASSWORD` | Clave del usuario `laptops` en PostgreSQL |
 | `APP_KEY` | Llave de Laravel (`php artisan key:generate --show`) |
 | `JWT_SECRET` | Firma de los tokens; 32 caracteres o más |
-| `ADMIN_USERNAME`, `ADMIN_PASSWORD` | Administrador inicial que crea el arranque de la API |
+| `ADMIN_USERNAME`, `ADMIN_PASSWORD` | Administrador inicial que crea el arranque de la API (el comando de arranque llega con T-17) |
 | `CORS_ORIGIN` | Único origen que puede llamar a la API desde el navegador |
 | `CLOCK_OFFSET_DAYS` | Solo para datos de demostración; normalmente `0` |
 

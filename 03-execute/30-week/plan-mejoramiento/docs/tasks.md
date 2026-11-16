@@ -24,7 +24,7 @@ commit que entrega la evidencia. Los comandos se corren desde `infra/` con los c
 | T-17 | Composición y arranque (admin inicial desde entorno) | T-16 | El sistema arranca con la base vacía y se puede iniciar sesión como admin; `tests/Feature/BootstrapAdminTest.php` | pendiente |
 | T-18 | Bajar a la base las invariantes **solo dominio** que se pueden expresar: `ck_laptop_total_positive`, `ck_user_role` | T-12 | `tests/Feature/DatabaseChecksTest.php`: un `INSERT` que las viole falla; `data-model.md` §4 actualizado | pendiente |
 | T-19 | Pruebas de arquitectura (artículos I, II y III) | T-17 | `tests/Architecture/*Test.php` pasan y fallan si se introduce una importación prohibida | pendiente |
-| T-20 | `infra`: `docker compose up` levanta motor vacío, API y frontend | T-17 | Un comando; la base arranca sin tablas hasta que la API corre las migraciones | pendiente |
+| T-20 | `infra`: `docker compose up` levanta motor vacío, API y frontend | T-17 | Un comando; la base arranca sin tablas hasta que la API corre las migraciones | en curso: `db` y `api` arrancan con un comando y la API migra la base vacía; falta `app` |
 | T-21 | `tool`: sembrador de demostración **por la API** (≥ 40 portátiles, 10 estudiantes, 15 préstamos, 3 vencidos) | T-17 | Tras correrlo, `/loans/overdue` devuelve 3 líneas y el reporte tiene filas | pendiente |
 | T-22 | `app`: login, inventario, estudiantes, prestar, devolver, vencidos, reporte, auxiliares | T-16 | Recorrido de punta a punta descrito en `app/README.md` | pendiente |
 | T-23 | `page`: sitio público estático de presentación | — | Se abre sin la API; correcto en móvil (375 px) y escritorio | pendiente |
