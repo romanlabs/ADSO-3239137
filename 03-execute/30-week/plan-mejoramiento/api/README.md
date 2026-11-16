@@ -16,10 +16,27 @@ Backend del sistema de préstamo de portátiles. Arquitectura hexagonal: `app/Do
 | `tests/Unit` | Dominio y casos de uso con fakes en memoria (sin base de datos) |
 | `tests/Feature` | Pruebas contra PostgreSQL real y de punta a punta |
 | `tests/Fakes` | Implementaciones en memoria de cada puerto |
+| `tests/Support` | Piezas de prueba que usan los adaptadores reales (`PostgresApplication`, `LaptopReadHook`) |
+| `app/Providers/PortBindingsServiceProvider.php` | Único lugar donde cada puerto se une con su adaptador |
+
+## Adaptadores
+
+| Puerto | Adaptador | Prueba contra lo real |
+|---|---|---|
+| Repositorios de portátil, estudiante, usuario y categoría | `Infrastructure/Persistence/Db*Repository` | `tests/Feature/RepositoriesTest.php` |
+| Préstamos y reporte de más solicitados | `DbLoanRepository`, `DbMostRequestedReportReader` | `LoanRepositoryTest`, `LastUnitConcurrencyTest`, `MostRequestedReportTest` |
+| Hash de claves y token | `Infrastructure/Security/Argon2PasswordHasher`, `JwtTokenIssuer` | `PasswordNeverLeaksTest` |
+| Fotos | `Infrastructure/Storage/DiskPhotoStorage` | `LaptopPhotoTest` |
+| Reloj, identificadores y transacción | `SystemClock`, `RandomUuidGenerator`, `DbTransactionRunner` | usados por todas las anteriores |
+
+La carrera por la última unidad (ADR-002) se prueba con **dos conexiones reales** a PostgreSQL: un operador lee el portátil,
+el otro presta y confirma en medio, y el primero recibe `LAPTOP_NOT_AVAILABLE` sin dejar préstamo a medias.
 
 ## Correr las pruebas
 
-Las pruebas de `Feature` necesitan PostgreSQL 16. Con Docker, desde esta carpeta:
+Con el sistema arriba (`../infra`), basta `docker compose exec api php vendor/bin/phpunit`.
+
+Sin el compose, las pruebas de `Feature` necesitan PostgreSQL 16. Con Docker, desde esta carpeta:
 
 ```bash
 docker network create laptops-dev

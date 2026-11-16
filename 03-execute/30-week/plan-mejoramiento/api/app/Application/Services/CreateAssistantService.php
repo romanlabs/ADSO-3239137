@@ -8,6 +8,7 @@ use App\Application\Ports\UserRepository;
 use App\Domain\Exceptions\UsernameTaken;
 use App\Domain\Exceptions\ValidationFailed;
 use App\Domain\User;
+use SensitiveParameter;
 
 /**
  * HU-02. Only assistants can be created through the API; the plain password is hashed here and never
@@ -24,7 +25,7 @@ final readonly class CreateAssistantService
     ) {
     }
 
-    public function create(string $username, string $password, string $role): User
+    public function create(string $username, #[SensitiveParameter] string $password, string $role): User
     {
         if (mb_strlen($password) < self::MIN_PASSWORD_LENGTH) {
             throw ValidationFailed::field('password', 'mínimo '.self::MIN_PASSWORD_LENGTH.' caracteres');

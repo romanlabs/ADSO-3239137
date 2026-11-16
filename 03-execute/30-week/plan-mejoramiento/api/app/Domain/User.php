@@ -3,6 +3,7 @@
 namespace App\Domain;
 
 use App\Domain\Exceptions\ValidationFailed;
+use SensitiveParameter;
 
 /**
  * Internal operator. The domain only ever sees the password hash, never the plain password.
@@ -18,7 +19,7 @@ final readonly class User
     }
 
     /** HU-02: the API can only create assistants; asking for admin is a validation error. */
-    public static function createAssistant(string $id, string $username, string $passwordHash, string $requestedRole): self
+    public static function createAssistant(string $id, string $username, #[SensitiveParameter] string $passwordHash, string $requestedRole): self
     {
         if ($requestedRole !== Role::Assistant->value) {
             throw ValidationFailed::field('role', 'solo se puede crear el rol assistant');
@@ -28,12 +29,12 @@ final readonly class User
     }
 
     /** The initial admin is provisioned from the environment at boot, never through the API. */
-    public static function provisionAdmin(string $id, string $username, string $passwordHash): self
+    public static function provisionAdmin(string $id, string $username, #[SensitiveParameter] string $passwordHash): self
     {
         return new self($id, self::normalizeUsername($username), $passwordHash, Role::Admin);
     }
 
-    public static function restore(string $id, string $username, string $passwordHash, string $role): self
+    public static function restore(string $id, string $username, #[SensitiveParameter] string $passwordHash, string $role): self
     {
         return new self($id, $username, $passwordHash, Role::from($role));
     }

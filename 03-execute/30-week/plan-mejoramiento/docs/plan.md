@@ -52,7 +52,7 @@ migración por defecto de `users`. Se eliminan para no crear tablas que el model
 | Arquitectura | Artículos I, II y III | El código fuente | `api/tests/Architecture` |
 | Concurrencia | Dos préstamos de la última unidad | PostgreSQL real, dos conexiones | `api/tests/Feature` |
 
-Se corren con `docker compose exec api php artisan test` desde `infra/`.
+Se corren con `docker compose exec api php vendor/bin/phpunit` desde `infra/`; `phpunit.xml` fija la base `laptops_test` y `tests/TestCase.php` se niega a correr sobre otra.
 
 ## 4. Orden de construcción
 
