@@ -49,7 +49,9 @@ app/
 ├── Infrastructure/
 │   ├── Http/                  # Controllers/, Middleware/ (Authenticate, RequireRole), ErrorRenderer, Presenters
 │   ├── Console/               # BootstrapAdminCommand
-│   ├── Persistence/           # DbLaptopRepository, DbLoanRepository, DbStudentRepository, …
+│   ├── Persistence/           # DbLaptopRepository, DbLoanRepository, DbStudentRepository, DbUserRepository,
+│   │                          # DbCategoryRepository, DbMostRequestedReportReader, DbTransactionRunner,
+│   │                          # RandomUuidGenerator, SqlValues (UTC, uuid y comodines de ILIKE)
 │   ├── Security/              # Argon2PasswordHasher, JwtTokenIssuer
 │   ├── Storage/               # DiskPhotoStorage
 │   └── Time/                  # SystemClock
@@ -57,7 +59,8 @@ app/
     └── PortBindingsServiceProvider.php   # único punto de composición
 database/migrations/            # esquema, tablas, restricciones y semilla de categorías
 routes/api.php                  # las 21 rutas del contrato
-tests/{Unit/Domain, Unit/Application, Feature, Architecture, Fakes}
+config/laptops.php              # JWT_SECRET, PHOTOS_DIR, CLOCK_OFFSET_DAYS, ADMIN_*, CORS_ORIGIN (solo del entorno)
+tests/{Unit/Domain, Unit/Application, Feature, Architecture, Fakes, Support}
 ```
 
 El frontend (`app/`) se organiza por pantalla: `src/pages/` (Login, Laptops, Students, Lend, LoanDetail, Overdue, Report, Assistants),
