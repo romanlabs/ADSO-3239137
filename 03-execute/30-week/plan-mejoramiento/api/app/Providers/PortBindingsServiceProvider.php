@@ -6,11 +6,15 @@ use App\Application\Ports\CategoryRepository;
 use App\Application\Ports\Clock;
 use App\Application\Ports\IdGenerator;
 use App\Application\Ports\LaptopRepository;
+use App\Application\Ports\LoanRepository;
+use App\Application\Ports\MostRequestedReportReader;
 use App\Application\Ports\StudentRepository;
 use App\Application\Ports\TransactionRunner;
 use App\Application\Ports\UserRepository;
 use App\Infrastructure\Persistence\DbCategoryRepository;
 use App\Infrastructure\Persistence\DbLaptopRepository;
+use App\Infrastructure\Persistence\DbLoanRepository;
+use App\Infrastructure\Persistence\DbMostRequestedReportReader;
 use App\Infrastructure\Persistence\DbStudentRepository;
 use App\Infrastructure\Persistence\DbTransactionRunner;
 use App\Infrastructure\Persistence\DbUserRepository;
@@ -28,6 +32,8 @@ final class PortBindingsServiceProvider extends ServiceProvider
         // Scoped: the laptop adapter remembers the units it read (ADR-002), so it lives exactly one request.
         $this->app->scoped(DbLaptopRepository::class);
         $this->app->bind(LaptopRepository::class, DbLaptopRepository::class);
+        $this->app->bind(LoanRepository::class, DbLoanRepository::class);
+        $this->app->bind(MostRequestedReportReader::class, DbMostRequestedReportReader::class);
 
         $this->app->bind(CategoryRepository::class, DbCategoryRepository::class);
         $this->app->bind(StudentRepository::class, DbStudentRepository::class);
