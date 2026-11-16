@@ -103,22 +103,23 @@ final class InMemoryLaptopRepository implements LaptopRepository
 
     public function save(Laptop $laptop): void
     {
-        $this->compareAndStore([$laptop]);
+        $this->compareAndStore([$laptop], 'total_units');
     }
 
     /**
      * Checks every laptop first and only then writes, so a lost race stores nothing.
      *
      * @param  list<Laptop>  $laptops
+     * @param  string|null  $field  error field; a loan reports the item index, like the PostgreSQL adapter
      */
-    public function compareAndStore(array $laptops): void
+    public function compareAndStore(array $laptops, ?string $field = null): void
     {
         foreach ($laptops as $index => $laptop) {
             $stored = $this->laptops[$laptop->id] ?? throw new LogicException('Saving a laptop that was never added.');
             $read = $this->readUnits[$laptop->id] ?? throw new LogicException('Saving a laptop that was never read.');
 
             if ($stored->availableUnits() !== $read) {
-                throw LaptopNotAvailable::create($laptop->name(), "items[{$index}].laptop_id");
+                throw LaptopNotAvailable::create($laptop->name(), $field ?? "items[{$index}].laptop_id");
             }
         }
 
