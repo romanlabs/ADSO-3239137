@@ -31,6 +31,8 @@ final class InMemoryApplication
 
     public readonly InMemoryLoanRepository $loans;
 
+    public readonly string $operatorId;
+
     public function __construct(string $now = '2026-11-16T14:15:00Z')
     {
         $this->clock = new FixedClock($now);
@@ -40,6 +42,12 @@ final class InMemoryApplication
         $this->laptops = new InMemoryLaptopRepository;
         $this->students = new InMemoryStudentRepository;
         $this->loans = new InMemoryLoanRepository($this->laptops, $this->students);
+        $this->operatorId = 'assistant-user-id';
+    }
+
+    public function renameCategory(string $id, string $name): void
+    {
+        $this->categories->rename($id, $name);
     }
 
     public function returnItem(): ReturnItemService

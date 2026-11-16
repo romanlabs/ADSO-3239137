@@ -7,36 +7,49 @@ use App\Domain\Exceptions\InvalidDateRange;
 use App\Domain\Exceptions\ValidationFailed;
 use App\Domain\Laptop;
 use App\Domain\Student;
-use PHPUnit\Framework\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Fakes\InMemoryApplication;
 use Tests\Fakes\InMemoryCategoryRepository;
+use Tests\Support\PostgresApplication;
+use Tests\TestCase;
 
 /**
  * HU-10 and ADR-004, driven through the services: lend, rename, then ask for the report.
- * Runs against the in-memory reader; the PostgreSQL reader joins this test with T-13.
+ * Every scenario runs twice: against the in-memory fakes and against PostgreSQL with the real adapters (T-13).
  */
 final class MostRequestedReportTest extends TestCase
 {
-    private const USER = 'assistant-user-id';
+    use RefreshDatabase;
 
-    private InMemoryApplication $app;
+    private InMemoryApplication|PostgresApplication $system;
 
     private Laptop $thinkPad;
 
     private Laptop $macBook;
 
-    protected function setUp(): void
+    /** @return array<string, array{0: string}> */
+    public static function backends(): array
     {
-        $this->app = new InMemoryApplication('2026-11-03T09:00:00Z');
-        $this->thinkPad = $this->app->createLaptop()->create('ThinkPad E14 Gen 5', 'Lenovo', 'TP-E14-G5', InMemoryCategoryRepository::PROGRAMMING, 10);
-        $this->macBook = $this->app->createLaptop()->create('MacBook Air M2', 'Apple', 'MBA-M2-13', InMemoryCategoryRepository::DESIGN, 10);
+        return ['in memory' => ['memory'], 'postgresql' => ['postgresql']];
     }
 
-    public function test_report_keeps_the_old_name_after_the_laptop_is_renamed(): void
+    private function startOn(string $backend): void
     {
+        $this->system = $backend === 'memory'
+            ? new InMemoryApplication('2026-11-03T09:00:00Z')
+            : new PostgresApplication($this->app, '2026-11-03T09:00:00Z');
+        $this->thinkPad = $this->system->createLaptop()->create('ThinkPad E14 Gen 5', 'Lenovo', 'TP-E14-G5', InMemoryCategoryRepository::PROGRAMMING, 10);
+        $this->macBook = $this->system->createLaptop()->create('MacBook Air M2', 'Apple', 'MBA-M2-13', InMemoryCategoryRepository::DESIGN, 10);
+    }
+
+    #[DataProvider('backends')]
+    public function test_report_keeps_the_old_name_after_the_laptop_is_renamed(string $backend): void
+    {
+        $this->startOn($backend);
         $this->lendAndReturn($this->thinkPad, $this->student('1001'));
 
-        $this->app->updateLaptop()->update($this->thinkPad->id, 'ThinkPad E14 (2023)', 'Lenovo', InMemoryCategoryRepository::PROGRAMMING, 10);
+        $this->system->updateLaptop()->update($this->thinkPad->id, 'ThinkPad E14 (2023)', 'Lenovo', InMemoryCategoryRepository::PROGRAMMING, 10);
 
         $this->assertSame(
             [[$this->thinkPad->id, 'ThinkPad E14 Gen 5', 'Programación', 1]],
@@ -44,19 +57,23 @@ final class MostRequestedReportTest extends TestCase
         );
     }
 
-    public function test_renaming_a_category_does_not_change_a_closed_period(): void
+    #[DataProvider('backends')]
+    public function test_renaming_a_category_does_not_change_a_closed_period(string $backend): void
     {
+        $this->startOn($backend);
         $this->lendAndReturn($this->macBook, $this->student('1001'));
 
-        $this->app->categories->rename(InMemoryCategoryRepository::DESIGN, 'Diseño gráfico');
+        $this->system->renameCategory(InMemoryCategoryRepository::DESIGN, 'Diseño gráfico');
 
-        $this->assertSame('Diseño', $this->app->mostRequested()->report('2026-11-01', '2026-11-30')->rows[0]->categoryName);
+        $this->assertSame('Diseño', $this->system->mostRequested()->report('2026-11-01', '2026-11-30')->rows[0]->categoryName);
     }
 
-    public function test_a_laptop_that_changed_category_inside_the_range_gets_two_rows(): void
+    #[DataProvider('backends')]
+    public function test_a_laptop_that_changed_category_inside_the_range_gets_two_rows(string $backend): void
     {
+        $this->startOn($backend);
         $this->lendAndReturn($this->thinkPad, $this->student('1001'));
-        $this->app->updateLaptop()->update($this->thinkPad->id, 'ThinkPad E14 Gen 5', 'Lenovo', InMemoryCategoryRepository::BASIC, 10);
+        $this->system->updateLaptop()->update($this->thinkPad->id, 'ThinkPad E14 Gen 5', 'Lenovo', InMemoryCategoryRepository::BASIC, 10);
         $this->lendAndReturn($this->thinkPad, $this->student('1002'));
         $this->lendAndReturn($this->thinkPad, $this->student('1003'));
 
@@ -66,17 +83,19 @@ final class MostRequestedReportTest extends TestCase
         ], $this->rows('2026-11-01', '2026-11-30'));
     }
 
-    public function test_rows_are_ordered_by_times_requested_then_name_and_both_days_are_inclusive(): void
+    #[DataProvider('backends')]
+    public function test_rows_are_ordered_by_times_requested_then_name_and_both_days_are_inclusive(string $backend): void
     {
-        $this->app->clock->advance('-2 days');
+        $this->startOn($backend);
+        $this->system->clock->advance('-2 days');
         $this->lendAndReturn($this->macBook, $this->student('0999'));
-        $this->app->clock->advance('+2 days');
+        $this->system->clock->advance('+2 days');
         $this->lendAndReturn($this->macBook, $this->student('1001'));
         $this->lendAndReturn($this->thinkPad, $this->student('1002'));
         $this->lendAndReturn($this->thinkPad, $this->student('1003'));
-        $this->app->clock->advance('+27 days +14 hours');
+        $this->system->clock->advance('+27 days +14 hours');
         $this->lendAndReturn($this->macBook, $this->student('1004'));
-        $this->app->clock->advance('+1 day');
+        $this->system->clock->advance('+1 day');
         $this->lendAndReturn($this->thinkPad, $this->student('1005'));
 
         $this->assertSame([
@@ -85,35 +104,43 @@ final class MostRequestedReportTest extends TestCase
         ], $this->rows('2026-11-03', '2026-11-30'));
     }
 
-    public function test_report_rows_carry_no_student_or_assistant_data(): void
+    #[DataProvider('backends')]
+    public function test_report_rows_carry_no_student_or_assistant_data(string $backend): void
     {
+        $this->startOn($backend);
         $this->lendAndReturn($this->thinkPad, $this->student('1001'));
 
-        $row = $this->app->mostRequested()->report('2026-11-01', '2026-11-30')->rows[0];
+        $row = $this->system->mostRequested()->report('2026-11-01', '2026-11-30')->rows[0];
 
         $this->assertSame(['laptopId', 'laptopName', 'categoryName', 'timesRequested'], array_keys(get_object_vars($row)));
     }
 
-    public function test_range_without_loans_is_an_empty_list(): void
+    #[DataProvider('backends')]
+    public function test_range_without_loans_is_an_empty_list(string $backend): void
     {
+        $this->startOn($backend);
         $this->lendAndReturn($this->thinkPad, $this->student('1001'));
 
         $this->assertSame([], $this->rows('2026-10-01', '2026-10-31'));
     }
 
-    public function test_end_before_start_or_missing_days_are_rejected(): void
+    #[DataProvider('backends')]
+    public function test_end_before_start_or_missing_days_are_rejected(string $backend): void
     {
-        $this->assertThrows(InvalidDateRange::class, fn () => $this->app->mostRequested()->report('2026-11-30', '2026-11-01'));
-        $this->assertThrows(ValidationFailed::class, fn () => $this->app->mostRequested()->report(null, '2026-11-01'));
-        $this->assertThrows(ValidationFailed::class, fn () => $this->app->mostRequested()->report('2026-11-01', ' '));
-        $this->assertThrows(ValidationFailed::class, fn () => $this->app->mostRequested()->report('2026-11-01', '2026-13-01'));
+        $this->startOn($backend);
+        $this->assertFailsWith(InvalidDateRange::class, fn () => $this->system->mostRequested()->report('2026-11-30', '2026-11-01'));
+        $this->assertFailsWith(ValidationFailed::class, fn () => $this->system->mostRequested()->report(null, '2026-11-01'));
+        $this->assertFailsWith(ValidationFailed::class, fn () => $this->system->mostRequested()->report('2026-11-01', ' '));
+        $this->assertFailsWith(ValidationFailed::class, fn () => $this->system->mostRequested()->report('2026-11-01', '2026-13-01'));
     }
 
-    public function test_same_day_range_is_valid(): void
+    #[DataProvider('backends')]
+    public function test_same_day_range_is_valid(string $backend): void
     {
+        $this->startOn($backend);
         $this->lendAndReturn($this->thinkPad, $this->student('1001'));
 
-        $report = $this->app->mostRequested()->report('2026-11-03', '2026-11-03');
+        $report = $this->system->mostRequested()->report('2026-11-03', '2026-11-03');
 
         $this->assertSame('2026-11-03', $report->range->from->format('Y-m-d'));
         $this->assertCount(1, $report->rows);
@@ -121,13 +148,13 @@ final class MostRequestedReportTest extends TestCase
 
     private function student(string $suffix): Student
     {
-        return $this->app->createStudent()->create("Estudiante {$suffix}", "100000{$suffix}");
+        return $this->system->createStudent()->create("Estudiante {$suffix}", "100000{$suffix}");
     }
 
     private function lendAndReturn(Laptop $laptop, Student $student): void
     {
-        $loan = $this->app->lend()->lend($student->id, [$laptop->id], self::USER);
-        $this->app->returnItem()->returnItem($loan->id, $loan->items()[0]->id);
+        $loan = $this->system->lend()->lend($student->id, [$laptop->id], $this->system->operatorId);
+        $this->system->returnItem()->returnItem($loan->id, $loan->items()[0]->id);
     }
 
     /** @return list<array{0: string, 1: string, 2: string, 3: int}> */
@@ -135,11 +162,11 @@ final class MostRequestedReportTest extends TestCase
     {
         return array_map(
             fn (MostRequestedRow $row) => [$row->laptopId, $row->laptopName, $row->categoryName, $row->timesRequested],
-            $this->app->mostRequested()->report($from, $to)->rows,
+            $this->system->mostRequested()->report($from, $to)->rows,
         );
     }
 
-    private function assertThrows(string $expected, callable $action): void
+    private function assertFailsWith(string $expected, callable $action): void
     {
         try {
             $action();
