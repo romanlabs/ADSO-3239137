@@ -8,7 +8,9 @@ use App\Application\Ports\IdGenerator;
 use App\Application\Ports\LaptopRepository;
 use App\Application\Ports\LoanRepository;
 use App\Application\Ports\MostRequestedReportReader;
+use App\Application\Ports\PasswordHasher;
 use App\Application\Ports\StudentRepository;
+use App\Application\Ports\TokenIssuer;
 use App\Application\Ports\TransactionRunner;
 use App\Application\Ports\UserRepository;
 use App\Infrastructure\Persistence\DbCategoryRepository;
@@ -19,6 +21,8 @@ use App\Infrastructure\Persistence\DbStudentRepository;
 use App\Infrastructure\Persistence\DbTransactionRunner;
 use App\Infrastructure\Persistence\DbUserRepository;
 use App\Infrastructure\Persistence\RandomUuidGenerator;
+use App\Infrastructure\Security\Argon2PasswordHasher;
+use App\Infrastructure\Security\JwtTokenIssuer;
 use App\Infrastructure\Time\SystemClock;
 use Illuminate\Support\ServiceProvider;
 
@@ -41,5 +45,9 @@ final class PortBindingsServiceProvider extends ServiceProvider
         $this->app->bind(TransactionRunner::class, DbTransactionRunner::class);
         $this->app->singleton(IdGenerator::class, RandomUuidGenerator::class);
         $this->app->singleton(Clock::class, fn () => new SystemClock((int) config('laptops.clock_offset_days')));
+
+        $this->app->bind(PasswordHasher::class, Argon2PasswordHasher::class);
+        $this->app->bind(JwtTokenIssuer::class, fn ($app) => new JwtTokenIssuer(config('laptops.jwt_secret'), $app->make(Clock::class)));
+        $this->app->bind(TokenIssuer::class, JwtTokenIssuer::class);
     }
 }
