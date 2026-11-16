@@ -16,7 +16,7 @@ commit que entrega la evidencia. Los comandos se corren desde `infra/` con los c
 | T-09 | Caso de uso **prestar** (`LendLaptopService`) con fakes | T-05, T-08 | `tests/Unit/Application/LendLaptopServiceTest.php`: HU-06 completa (límite, vencidos, sin unidades, repetido) | hecha |
 | T-10 | Caso de uso **devolver** y **vencidos** | T-09 | `tests/Unit/Application/ReturnAndOverdueTest.php`: HU-07 y HU-09; devolver dos veces → `ITEM_ALREADY_RETURNED` | hecha |
 | T-11 | Caso de uso **reporte de más solicitados** y su puerto de lectura | T-09 | `tests/Feature/MostRequestedReportTest.php`: HU-10; el nombre viejo se conserva tras renombrar (ADR-004) | hecha |
-| T-12 | Adaptador de persistencia: repositorios de portátil, estudiante, usuario y categoría | T-02, T-08 | `tests/Feature/RepositoriesTest.php` contra PostgreSQL real | pendiente |
+| T-12 | Adaptador de persistencia: repositorios de portátil, estudiante, usuario y categoría | T-02, T-08 | `tests/Feature/RepositoriesTest.php` contra PostgreSQL real | hecha |
 | T-13 | Adaptador de persistencia: repositorio de préstamos con actualización condicional de unidades | T-12, T-09 | `tests/Feature/LastUnitConcurrencyTest.php`: dos préstamos de la última unidad, uno 201 y otro 409 (RNF-2); `MostRequestedReportTest.php` suma el caso contra PostgreSQL | pendiente |
 | T-14 | Adaptador de seguridad: hash Argon2id y token JWT | T-07 | `tests/Feature/PasswordNeverLeaksTest.php`: la clave nunca aparece en logs ni respuestas (RNF-3) | pendiente |
 | T-15 | Adaptador de fotos (disco) | T-08 | `tests/Feature/LaptopPhotoTest.php`: PNG de 2 MB ok; 3 MB → 422; sin foto → `photo_key` nulo | pendiente |
