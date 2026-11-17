@@ -24,9 +24,12 @@ curl http://localhost:8000/api/v1/health   # {"status":"ok"}
 | `DB_PASSWORD` | Clave del usuario `laptops` en PostgreSQL |
 | `APP_KEY` | Llave de Laravel (`php artisan key:generate --show`) |
 | `JWT_SECRET` | Firma de los tokens; 32 caracteres o más |
-| `ADMIN_USERNAME`, `ADMIN_PASSWORD` | Administrador inicial que crea el arranque de la API (el comando de arranque llega con T-17) |
+| `ADMIN_USERNAME`, `ADMIN_PASSWORD` | Administrador inicial: al arrancar, la API corre `php artisan app:bootstrap-admin` y lo crea si no existe |
 | `CORS_ORIGIN` | Único origen que puede llamar a la API desde el navegador |
 | `CLOCK_OFFSET_DAYS` | Solo para datos de demostración; normalmente `0` |
+
+Datos de demostración: con la base recién creada, `cd ../tool && ./seed.sh` siembra por la API 40 portátiles, 10
+estudiantes, 15 préstamos y 3 vencidos ([`tool/README.md`](../tool/README.md)).
 
 ## Quién crea el esquema
 
