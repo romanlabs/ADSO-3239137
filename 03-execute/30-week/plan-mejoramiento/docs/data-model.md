@@ -137,9 +137,9 @@ porque ningún requisito las pide. En Laravel esto se traduce en no usar `$table
 | `loan_item.loan_id` → `loan.id` CASCADE | FK | **motor** |
 | `loan_item.laptop_id` → `laptop.id` RESTRICT | FK | **motor** |
 | `0 <= available_units <= total_units` | `ck_laptop_available_range` | **motor** — última barrera de concurrencia |
-| `total_units >= 1` | `ck_laptop_total_positive` | **motor** desde T-18 |
+| `total_units >= 1` | `ck_laptop_total_positive` | **motor** (migración `2026_11_17_000001`, T-18) |
 | Único `(loan_id, laptop_id)` | índice único | **motor** |
-| `role` en (`admin`,`assistant`) | `ck_user_role` | **motor** desde T-18 |
+| `role` en (`admin`,`assistant`) | `ck_user_role` | **motor** (migración `2026_11_17_000001`, T-18) |
 | Máximo 1 portátil sin devolver por estudiante | — | **solo dominio** (no expresable en un `CHECK` sobre una fila) |
 | Estudiante con vencidos no recibe | — | **solo dominio** |
 | Descontar la unidad y crear la línea son una operación | — | **solo dominio** (una transacción) |
