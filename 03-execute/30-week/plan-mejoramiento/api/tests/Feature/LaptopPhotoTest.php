@@ -8,16 +8,20 @@ use App\Application\Services\LaptopPhotoService;
 use App\Domain\Exceptions\ValidationFailed;
 use App\Domain\Laptop;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Testing\TestResponse;
+use Tests\Support\CallsTheApi;
 use Tests\Support\ImageBytes;
 use Tests\TestCase;
 
 /**
  * CA-03.4 with the disk adapter and PostgreSQL: JPG or PNG up to 2 MB by content, the row keeps only an opaque key,
- * and a replaced or removed file is deleted from disk. The 422 status of a rejected file joins this test with T-16.
+ * and a replaced or removed file is deleted from disk. The last test does the same through PUT /laptops/{id}/photo (T-16).
  */
 final class LaptopPhotoTest extends TestCase
 {
+    use CallsTheApi;
     use RefreshDatabase;
 
     private const TWO_MB = 2 * 1024 * 1024;
@@ -108,6 +112,31 @@ final class LaptopPhotoTest extends TestCase
         $storage->delete('../../'.$key);
 
         $this->assertSame([$key], $this->files());
+    }
+
+    public function test_over_http_two_megabytes_answer_200_three_answer_422_and_no_photo_is_null(): void
+    {
+        $this->startApi();
+        $admin = $this->adminToken();
+
+        $this->send($admin, 'GET', "/laptops/{$this->laptop->id}")->assertOk()->assertJsonPath('photo_key', null);
+
+        $tooBig = $this->putPhoto($admin, self::png(3 * 1024 * 1024));
+        $this->assertErrorBody($tooBig, 422, 'VALIDATION_ERROR');
+        $tooBig->assertJsonPath('details.0.field', 'file');
+        $this->assertSame([], $this->files());
+
+        $this->putPhoto($admin, self::png(self::TWO_MB))->assertOk()->assertJsonPath('photo_key', $this->storedKey());
+        $this->assertCount(1, $this->files());
+    }
+
+    private function putPhoto(string $token, string $bytes): TestResponse
+    {
+        $file = UploadedFile::fake()->createWithContent('foto.png', $bytes);
+
+        return $this->call('PUT', "/api/v1/laptops/{$this->laptop->id}/photo", [], [], ['file' => $file], [
+            'HTTP_AUTHORIZATION' => "Bearer {$token}", 'HTTP_ACCEPT' => 'application/json',
+        ]);
     }
 
     private function assertRejected(string $bytes): void
