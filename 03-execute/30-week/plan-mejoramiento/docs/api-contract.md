@@ -40,6 +40,10 @@ de excepciones registrado en `bootstrap/app.php`; las respuestas por defecto del
 | 404 | No existe (o está dado de baja) |
 | 409 | Conflicto de estado: duplicado, sin unidades, ya devuelto, estudiante con vencidos, portátil con préstamos abiertos |
 | 422 | Validación: campo inválido, regla de entrada rota, rango de fechas invertido |
+| 500 | Falla inesperada del servidor. Usa el mismo cuerpo con `code` = `INTERNAL_ERROR` y un mensaje genérico; no es un código de negocio, por eso no está en §2 |
+
+Los errores del framework también usan el cuerpo único: una ruta inexistente o un método no admitido responden 404 `NOT_FOUND`,
+y un JSON mal formado responde 422 `VALIDATION_ERROR`.
 
 ## 2. Códigos de error de negocio
 
