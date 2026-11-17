@@ -8,15 +8,20 @@ use App\Application\Services\LaptopPhotoService;
 use App\Domain\Exceptions\ValidationFailed;
 use App\Domain\Laptop;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Testing\TestResponse;
+use Tests\Support\CallsTheApi;
+use Tests\Support\ImageBytes;
 use Tests\TestCase;
 
 /**
  * CA-03.4 with the disk adapter and PostgreSQL: JPG or PNG up to 2 MB by content, the row keeps only an opaque key,
- * and a replaced or removed file is deleted from disk. The 422 status of a rejected file joins this test with T-16.
+ * and a replaced or removed file is deleted from disk. The last test does the same through PUT /laptops/{id}/photo (T-16).
  */
 final class LaptopPhotoTest extends TestCase
 {
+    use CallsTheApi;
     use RefreshDatabase;
 
     private const TWO_MB = 2 * 1024 * 1024;
@@ -109,6 +114,31 @@ final class LaptopPhotoTest extends TestCase
         $this->assertSame([$key], $this->files());
     }
 
+    public function test_over_http_two_megabytes_answer_200_three_answer_422_and_no_photo_is_null(): void
+    {
+        $this->startApi();
+        $admin = $this->adminToken();
+
+        $this->send($admin, 'GET', "/laptops/{$this->laptop->id}")->assertOk()->assertJsonPath('photo_key', null);
+
+        $tooBig = $this->putPhoto($admin, self::png(3 * 1024 * 1024));
+        $this->assertErrorBody($tooBig, 422, 'VALIDATION_ERROR');
+        $tooBig->assertJsonPath('details.0.field', 'file');
+        $this->assertSame([], $this->files());
+
+        $this->putPhoto($admin, self::png(self::TWO_MB))->assertOk()->assertJsonPath('photo_key', $this->storedKey());
+        $this->assertCount(1, $this->files());
+    }
+
+    private function putPhoto(string $token, string $bytes): TestResponse
+    {
+        $file = UploadedFile::fake()->createWithContent('foto.png', $bytes);
+
+        return $this->call('PUT', "/api/v1/laptops/{$this->laptop->id}/photo", [], [], ['file' => $file], [
+            'HTTP_AUTHORIZATION' => "Bearer {$token}", 'HTTP_ACCEPT' => 'application/json',
+        ]);
+    }
+
     private function assertRejected(string $bytes): void
     {
         try {
@@ -139,18 +169,13 @@ final class LaptopPhotoTest extends TestCase
         return is_dir($this->directory) ? array_values(array_diff(scandir($this->directory), ['.', '..'])) : [];
     }
 
-    /** A valid 1x1 PNG padded with a private ancillary chunk up to the exact size asked for. */
     private static function png(int $totalBytes): string
     {
-        $chunk = fn (string $type, string $data) => pack('N', strlen($data)).$type.$data.pack('N', crc32($type.$data));
-        $head = "\x89PNG\r\n\x1a\n".$chunk('IHDR', pack('NNCCCCC', 1, 1, 8, 2, 0, 0, 0)).$chunk('IDAT', gzcompress("\x00\xff\x00\x00"));
-        $tail = $chunk('IEND', '');
-
-        return $head.$chunk('raNd', str_repeat("\0", $totalBytes - strlen($head) - strlen($tail) - 12)).$tail;
+        return ImageBytes::png($totalBytes);
     }
 
     private static function jpeg(): string
     {
-        return "\xFF\xD8\xFF\xE0\x00\x10JFIF\x00\x01\x01\x00\x00\x01\x00\x01\x00\x00".str_repeat("\x00", 64)."\xFF\xD9";
+        return ImageBytes::jpeg();
     }
 }

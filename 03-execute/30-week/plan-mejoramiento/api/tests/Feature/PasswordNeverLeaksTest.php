@@ -11,17 +11,20 @@ use App\Infrastructure\Security\JwtTokenIssuer;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use LogicException;
 use Tests\Fakes\FixedClock;
+use Tests\Support\CallsTheApi;
 use Tests\TestCase;
 use Throwable;
 
 /**
  * RNF-3 and constitution article IX with the real Argon2id hasher, the real JWT issuer and PostgreSQL: the plain
  * password never reaches the database, a log line, a stack trace, an error message or anything handed back to a caller.
- * The HTTP responses join this test with T-16.
+ * The last test checks the same through the HTTP responses (T-16).
  */
 final class PasswordNeverLeaksTest extends TestCase
 {
+    use CallsTheApi;
     use RefreshDatabase;
 
     /** Short enough that a PHP stack trace would print it whole instead of cutting it at 15 characters. */
@@ -110,7 +113,8 @@ final class PasswordNeverLeaksTest extends TestCase
                 $this->fail('Each attempt must fail.');
             } catch (UsernameTaken|InvalidCredentials $error) {
                 $this->assertSecretsAbsentFrom($error->getMessage().json_encode($error->details()));
-                report($error);
+                // Business errors are not reported (bootstrap/app.php), so wrap it like an unexpected failure would be.
+                report(new LogicException('Unexpected failure', 0, $error));
             }
         }
 
@@ -118,6 +122,27 @@ final class PasswordNeverLeaksTest extends TestCase
         $this->assertStringContainsString('UsernameTaken', $log, 'The stack traces must really be in the log.');
         $this->assertSecretsAbsentFrom($log);
         $this->assertNotContains(self::PASSWORD, $this->boundValues);
+    }
+
+    public function test_no_http_response_carries_the_password_or_its_hash(): void
+    {
+        $this->startApi();
+        $admin = $this->adminToken();
+        $body = ['username' => 'camila', 'password' => self::PASSWORD, 'role' => 'assistant'];
+
+        $responses = [
+            $this->send($admin, 'POST', '/users', $body)->assertCreated(),
+            $this->send($admin, 'POST', '/users', $body)->assertStatus(409),
+            $this->send($admin, 'POST', '/users', ['role' => 'admin'] + $body)->assertStatus(422),
+            $this->postJson('/api/v1/auth/login', ['username' => 'camila', 'password' => self::PASSWORD])->assertOk(),
+            $this->postJson('/api/v1/auth/login', ['username' => 'camila', 'password' => self::PASSWORD.'!'])->assertStatus(401),
+        ];
+
+        foreach ($responses as $response) {
+            $this->assertSecretsAbsentFrom($response->getContent());
+            $this->assertStringNotContainsString('password', $response->getContent());
+        }
+        $this->assertSecretsAbsentFrom((string) file_get_contents($this->logFile));
     }
 
     private function assertSecretsAbsentFrom(string $text): void
