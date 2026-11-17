@@ -11,6 +11,7 @@ use App\Infrastructure\Security\JwtTokenIssuer;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use LogicException;
 use Tests\Fakes\FixedClock;
 use Tests\TestCase;
 use Throwable;
@@ -110,7 +111,8 @@ final class PasswordNeverLeaksTest extends TestCase
                 $this->fail('Each attempt must fail.');
             } catch (UsernameTaken|InvalidCredentials $error) {
                 $this->assertSecretsAbsentFrom($error->getMessage().json_encode($error->details()));
-                report($error);
+                // Business errors are not reported (bootstrap/app.php), so wrap it like an unexpected failure would be.
+                report(new LogicException('Unexpected failure', 0, $error));
             }
         }
 
