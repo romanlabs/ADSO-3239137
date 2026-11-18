@@ -50,6 +50,18 @@ services:
       timeout: 3s
       retries: 30
 
+  app:
+    build:
+      context: ../app
+      args:
+        # The browser calls the API from the host, so this is the published port of api, not the service name.
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
+    ports:
+      - "5173:5173"
+    depends_on:
+      api:
+        condition: service_healthy
+
 volumes:
   db-data:
   photos:

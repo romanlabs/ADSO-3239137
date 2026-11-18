@@ -6,7 +6,7 @@
 |---|---|---|---|
 | `db` | `postgres:16` | interno (5432) | Motor vacío: no trae scripts de inicio ni tablas |
 | `api` | se construye desde `../api` | `8000` | Corre las migraciones al arrancar y sirve `/api/v1` |
-| `app` | se construye desde `../app` | `5173` | Frontend React (se suma cuando la app esté lista) |
+| `app` | se construye desde `../app` | `5173` | Frontend React compilado y servido por nginx; arranca cuando la API está sana |
 
 ## Pasos
 
@@ -15,6 +15,7 @@ cd infra
 cp .env.example .env        # y reemplaza cada valor
 docker compose up --build --wait
 curl http://localhost:8000/api/v1/health   # {"status":"ok"}
+# la app queda en http://localhost:5173 (entra con ADMIN_USERNAME y ADMIN_PASSWORD)
 ```
 
 `.env` nunca se sube al repositorio. Si falta una variable obligatoria, `docker compose` se detiene y dice cuál.
@@ -27,6 +28,7 @@ curl http://localhost:8000/api/v1/health   # {"status":"ok"}
 | `ADMIN_USERNAME`, `ADMIN_PASSWORD` | Administrador inicial: al arrancar, la API corre `php artisan app:bootstrap-admin` y lo crea si no existe |
 | `CORS_ORIGIN` | Único origen que puede llamar a la API desde el navegador |
 | `CLOCK_OFFSET_DAYS` | Solo para datos de demostración; normalmente `0` |
+| `VITE_API_URL` | Origen de la API visto desde el navegador (`http://localhost:8000`); se fija al construir la app |
 
 Datos de demostración: con la base recién creada, `cd ../tool && ./seed.sh` siembra por la API 40 portátiles, 10
 estudiantes, 15 préstamos y 3 vencidos ([`tool/README.md`](../tool/README.md)).
