@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext.jsx';
 
 const LINKS = [
@@ -15,6 +15,7 @@ const ROLE_LABEL = { admin: 'Administrador', assistant: 'Auxiliar' };
 
 export default function Layout() {
   const { session, signOut } = useAuth();
+  const navigate = useNavigate();
   const links = LINKS.filter((link) => link.roles.includes(session.role));
 
   return (
@@ -35,7 +36,15 @@ export default function Layout() {
           <span>
             {session.username} · {ROLE_LABEL[session.role] ?? session.role}
           </span>
-          <button type="button" className="ghost" onClick={() => signOut()}>
+          {/* An explicit exit goes to a clean /login: the next user must not land on the last page of this one. */}
+          <button
+            type="button"
+            className="ghost"
+            onClick={() => {
+              signOut();
+              navigate('/login', { replace: true });
+            }}
+          >
             Salir
           </button>
         </div>
