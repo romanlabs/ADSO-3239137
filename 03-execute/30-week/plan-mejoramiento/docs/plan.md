@@ -39,7 +39,7 @@ migración por defecto de `users`. Se eliminan para no crear tablas que el model
 | `PHOTOS_DIR` | no | `storage/app/photos` |
 | `CORS_ORIGIN` | sí | `http://localhost:5173` |
 | `CLOCK_OFFSET_DAYS` | no | `0` (solo distinto de 0 al sembrar datos de demostración; ver ADR-005) |
-| `VITE_API_URL` (app) | sí | `http://localhost:8000/api/v1` |
+| `VITE_API_URL` (app) | sí | `http://localhost:8000` (origen de la API; el cliente le suma `/api/v1`. Se fija al compilar) |
 
 ## 3. Estrategia de pruebas
 
