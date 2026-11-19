@@ -16,4 +16,28 @@ que hacen sus auxiliares, y vea qué portátiles se solicitan más.
 
 El acta del plan, con código y sin datos personales, está en [`Plan-Mejoramiento-A06.pdf`](Plan-Mejoramiento-A06.pdf).
 
-> Estado: en construcción. Este README se completa con las instrucciones de ejecución a medida que avanza el proyecto.
+## Cómo correrlo
+
+Requisitos: Docker con Compose y Node 20 o superior (solo para el sembrador).
+
+```bash
+cd infra
+cp .env.example .env              # reemplaza cada valor; JWT_SECRET de 32 caracteres o más
+docker compose up --build --wait  # db (postgres:16), api (8000) y app (5173)
+curl http://localhost:8000/api/v1/health    # {"status":"ok"}
+
+cd ../tool
+./seed.sh                         # 40 portátiles, 10 estudiantes, 15 préstamos, 3 vencidos
+```
+
+Abre `http://localhost:5173` y entra con `ADMIN_USERNAME` y `ADMIN_PASSWORD` del `.env`. El sitio público no necesita
+nada de esto: se abre con doble clic en `page/index.html`.
+
+| Qué | Cómo |
+|---|---|
+| Pruebas de la API | `docker compose exec api php vendor/bin/phpunit` (en `infra`) |
+| Pruebas de la app | `npm install && npm test` (en `app`) |
+| Ver el esquema creado por las migraciones | `docker compose exec db psql -U laptops -d laptops -c "\dt laptops.*"` |
+| Empezar de cero | `docker compose down -v` (en `infra`) |
+
+Más detalle en el README de cada carpeta y en [`docs/tasks.md`](docs/tasks.md), con la evidencia de las 23 tareas.
