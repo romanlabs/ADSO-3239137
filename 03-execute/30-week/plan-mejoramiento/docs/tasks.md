@@ -27,7 +27,7 @@ commit que entrega la evidencia. Los comandos se corren desde `infra/` con los c
 | T-20 | `infra`: `docker compose up` levanta motor vacío, API y frontend | T-17 | Un comando; la base arranca sin tablas hasta que la API corre las migraciones | hecha: `docker compose up --build --wait` con los volúmenes borrados levanta `db`, `api` y `app` (5173); la API migra la base vacía |
 | T-21 | `tool`: sembrador de demostración **por la API** (≥ 40 portátiles, 10 estudiantes, 15 préstamos, 3 vencidos) | T-17 | `tool/seed.sh` sobre una base recién creada imprime 15 préstamos, 3 vencidos y filas en el reporte; si no coinciden, termina con error | hecha |
 | T-22 | `app`: login, inventario, estudiantes, prestar, devolver, vencidos, reporte, auxiliares | T-16 | Recorrido de punta a punta descrito en `app/README.md` | hecha: los 18 pasos corridos con Chrome automatizado contra el compose; `npm test` cubre el cliente y la sesión |
-| T-23 | `page`: sitio público estático de presentación | — | Se abre sin la API; correcto en móvil (375 px) y escritorio | pendiente |
+| T-23 | `page`: sitio público estático de presentación | — | Se abre sin la API; correcto en móvil (375 px) y escritorio | hecha: abre con doble clic sin la API; revisado a 375 px y 1366 px sin desplazamiento horizontal (`page/README.md`) |
 
 ## Definición de terminado
 
