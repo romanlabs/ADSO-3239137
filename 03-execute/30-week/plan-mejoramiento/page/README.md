@@ -19,3 +19,12 @@ Inventario, categorías, estudiantes, préstamos, devoluciones, vencidos, más s
 
 `styles.css` tiene dos cortes con `@media`: hasta 900 px (una columna en la portada) y hasta 600 px (tarjetas en una
 sola columna). Se revisa en 375 px (móvil) y 1366 px (escritorio).
+
+## Cómo se comprobó (evidencia de T-23)
+
+| Prueba | Resultado |
+|---|---|
+| Abrir `index.html` con doble clic, sin API ni servidor | Carga completo: no hace peticiones de red ni usa JavaScript |
+| 375 px de ancho | Portada en una columna, tarjetas una debajo de otra, sin desplazamiento horizontal |
+| 1366 px de ancho | Portada en dos columnas y funciones en una cuadrícula de tres |
+| Menú `Funciones`, `Reglas`, `Roles` | Cada enlace baja a su sección |
